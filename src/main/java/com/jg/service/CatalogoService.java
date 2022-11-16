@@ -65,9 +65,7 @@ public class CatalogoService implements ICatalogo {
 
     @Override
     public Resource cargarArchivoRodaje(long idRodaje) {
-        Rodaje rodaje = rodajeService.encontrar(idRodaje).orElseThrow(() ->
-        {throw new CustomNotFoundException("Rodaje no encontrado");
-        });
+        Rodaje rodaje = rodajeService.encontrar(idRodaje);
         String nombreArchivo = rodaje.getImagen();
         return archivo(nombreArchivo);
 

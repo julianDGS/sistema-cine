@@ -6,15 +6,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IMovieService {
-    public  List<Rodaje> listarRodajes();
+     List<Rodaje> listarRodajes();
+
+     List<Genero> listarGeneros();
+
+     Rodaje guardar(Rodaje rodaje);
+
+    Rodaje encontrar(Long idRodaje);
     
-    public List<Genero> listarGeneros();
+    void eliminar(long idRodaje);
     
-    public Rodaje guardar(Rodaje rodaje);
-    
-    public Optional<Rodaje> encontrar(Long idRodaje);
-    
-    public void eliminar(Rodaje rodaje);
-    
-    public Rodaje encontrarPorTitulo(String titulo);
+    Rodaje encontrarPorTitulo(String titulo);
+
+    List<Rodaje> filtrarGeneroRodaje(long idGenero);
+
+    List<Rodaje> ordenarRodajeFecha(String sort);
 }

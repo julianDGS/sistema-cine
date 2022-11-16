@@ -5,10 +5,8 @@ import com.jg.exceptions.InvalidFieldException;
 import com.jg.service.CatalogoService;
 import com.jg.service.ICharacterService;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 
-import org.aspectj.weaver.patterns.PerObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -20,11 +18,15 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class CharacterController {
 
-    @Autowired
-    private CatalogoService catalogoService;
+    private final CatalogoService catalogoService;
+
+    private final ICharacterService personajeService;
 
     @Autowired
-    private ICharacterService personajeService;
+    public CharacterController(CatalogoService catalogoService, ICharacterService personajeService) {
+        this.catalogoService = catalogoService;
+        this.personajeService = personajeService;
+    }
 
     @GetMapping("/img/{idPersonaje}")
     private ResponseEntity<Resource> cargarImagen(@PathVariable("idPersonaje") long idPersonaje) {

@@ -1,11 +1,10 @@
 package com.jg.controller;
 
 import com.jg.domain.*;
+import com.jg.exceptions.InvalidFieldException;
 import com.jg.service.CatalogoService;
-import com.jg.service.RodajeService;
-import java.util.Comparator;
+import com.jg.service.IMovieService;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -18,11 +17,15 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class MovieController {
 
-    @Autowired
-    private CatalogoService catalogoService;
+    private final CatalogoService catalogoService;
+
+    private final IMovieService rodajeService;
 
     @Autowired
-    private RodajeService rodajeService;
+    public MovieController(CatalogoService catalogoService, IMovieService rodajeService) {
+        this.catalogoService = catalogoService;
+        this.rodajeService = rodajeService;
+    }
 
     @GetMapping("/img/{idRodaje}")
     private ResponseEntity<Resource> cargarImagen(@PathVariable("idRodaje") long idRodaje) {
@@ -30,74 +33,51 @@ public class MovieController {
     }
 
     @GetMapping("")
-    private ResponseEntity<Rodaje> listadoRodajes() {
-        List<Rodaje> rodajes = rodajeService.listarRodajes();
-        return new ResponseEntity(rodajes, HttpStatus.OK);
+    private ResponseEntity<List<Rodaje>> listadoRodajes() {
+        return new ResponseEntity<>(rodajeService.listarRodajes(), HttpStatus.OK);
     }
 
     @GetMapping("/save")
-    private ResponseEntity<?> formularioCrearRodaje() {
-        List<Genero> generos = rodajeService.listarGeneros();
-        return new ResponseEntity(generos, HttpStatus.OK);
+    private ResponseEntity<List<Genero>> formularioCrearRodaje() {
+        return new ResponseEntity<>(rodajeService.listarGeneros(), HttpStatus.OK);
     }
 
     @PostMapping("/save")
-    private ResponseEntity<?> guardarRodaje(@Valid @RequestBody Rodaje rodaje, BindingResult br) {
+    private ResponseEntity<Rodaje> guardarRodaje(@Valid @RequestBody Rodaje rodaje, BindingResult br) {
         if (br.hasErrors()) {
-            return new ResponseEntity("Fail creating Movie/serie", HttpStatus.BAD_REQUEST);
+            throw new InvalidFieldException("Campos no válidos", br);
         }
-        rodaje.setImagen(catalogoService.guardarArchivo(rodaje.getImgTemp()));
-        return new ResponseEntity(rodajeService.guardar(rodaje), HttpStatus.OK);
+        return new ResponseEntity<>(rodajeService.guardar(rodaje), HttpStatus.OK);
     }
 
     @GetMapping("/update/{idRodaje}")
-    private ResponseEntity<?> editarRodaje(Rodaje rodaje) {
-        return new ResponseEntity(rodajeService.encontrar(rodaje.getIdRodaje()).orElse(null), HttpStatus.OK);
+    private ResponseEntity<Rodaje> editarRodaje(Rodaje rodaje) {
+        return new ResponseEntity<>(rodajeService.encontrar(rodaje.getIdRodaje()), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{idRodaje}")
-    private ResponseEntity<?> eliminarRodaje(@PathVariable("idRodaje") long idRodaje) {
-        Rodaje rodaje = rodajeService.encontrar(idRodaje).orElse(null);
-        catalogoService.eliminarArchivo(rodaje.getImagen());
-        rodajeService.eliminar(rodaje);
-        return new ResponseEntity("Movie or Serie deleted", HttpStatus.OK);
+    private ResponseEntity<String> eliminarRodaje(@PathVariable("idRodaje") long idRodaje) {
+        rodajeService.eliminar(idRodaje);
+        return new ResponseEntity<>("Movie or Serie deleted", HttpStatus.OK);
     }
 
     @GetMapping("/details/{idRodaje}")
-    private ResponseEntity<?> detallesRodaje(Rodaje rodaje) {
-        rodaje = rodajeService.encontrar(rodaje.getIdRodaje()).orElse(null);
-        if (rodaje == null) {
-            return new ResponseEntity("This Movie or Serie doesn't exists", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity(rodaje, HttpStatus.OK);
+    private ResponseEntity<Rodaje> detallesRodaje(Rodaje rodaje) {
+        return new ResponseEntity<>(rodajeService.encontrar(rodaje.getIdRodaje()), HttpStatus.OK);
     }
 
     @GetMapping(params = "name")
-    private ResponseEntity<?> buscarRodaje(@RequestParam(name = "name") String titulo) {
-        return new ResponseEntity(rodajeService.encontrarPorTitulo(titulo), HttpStatus.OK);
+    private ResponseEntity<Rodaje> buscarRodaje(@RequestParam(name = "name") String titulo) {
+        return new ResponseEntity<>(rodajeService.encontrarPorTitulo(titulo), HttpStatus.OK);
     }
 
     @GetMapping(params = "genre")
-    private ResponseEntity<?> filtrarGeneroRodaje(@RequestParam(name = "genre") long idGenero) {
-        List<Rodaje> rodajes = rodajeService.listarRodajes();
-        rodajes = rodajes.stream()
-                .filter(i -> i.getGeneros() == null ? false : i.getGeneros().stream()
-                .anyMatch(j -> j.getIdGenero() == idGenero))
-                .collect(Collectors.toList());
-        return new ResponseEntity(rodajes, HttpStatus.OK);
+    private ResponseEntity<List<Rodaje>> filtrarGeneroRodaje(@RequestParam(name = "genre") long idGenero) {
+        return new ResponseEntity<>(rodajeService.filtrarGeneroRodaje(idGenero), HttpStatus.OK);
     }
 
     @GetMapping(params = "order")
-    private ResponseEntity<?> ordenarRodajeFecha(@RequestParam(name = "order") String sort) {
-        List<Rodaje> rodajes = (List<Rodaje>) this.listadoRodajes().getBody();
-        if (rodajes == null){
-            return new ResponseEntity("Movies is empty", HttpStatus.BAD_REQUEST);
-        }
-        if(sort.equals("ASC")){
-            rodajes.sort((o1, o2) -> o1.getFecha().compareTo(o2.getFecha()));
-        } else if (sort.equals("DESC")){
-            rodajes.sort(Comparator.comparing((Rodaje o) -> o.getFecha()).reversed());
-        }
-        return new ResponseEntity(rodajes, HttpStatus.OK);
+    private ResponseEntity<List<Rodaje>> ordenarRodajeFecha(@RequestParam(name = "order") String sort) {
+        return new ResponseEntity<>(rodajeService.ordenarRodajeFecha(sort), HttpStatus.OK);
     }
 }
