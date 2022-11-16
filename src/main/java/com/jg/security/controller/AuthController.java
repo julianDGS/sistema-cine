@@ -38,15 +38,15 @@ public class AuthController {
     JwtProvider jwtProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<?> nuevo(@Valid @RequestBody UserRegisterDto nuevoUsuario, BindingResult bindingResult) {
+    public ResponseEntity<String> nuevo(@Valid @RequestBody UserRegisterDto nuevoUsuario, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity("campos mal puestos o email inválido", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("campos mal puestos o email inválido");
         }
         if (usuarioService.existeUsuario(nuevoUsuario.getUsername())) {
-            return new ResponseEntity("ese nombre ya existe", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("ese nombre ya existe");
         }
         if (usuarioService.existeEmail(nuevoUsuario.getEmail())) {
-            return new ResponseEntity("ese email ya existe", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("ese email ya existe");
         }
         Usuario usuario
                 = new Usuario(nuevoUsuario.getUsername(), passwordEncoder.encode(nuevoUsuario.getPassword()), nuevoUsuario.getEmail());
@@ -57,7 +57,8 @@ public class AuthController {
             roles.add(rolService.encontrar("ROLE_ADMIN").get());
         }
         usuario.setRoles(roles);
-        return new ResponseEntity(usuarioService.guardar(usuario), HttpStatus.CREATED);
+        usuarioService.guardar(usuario);
+        return new ResponseEntity<>("User " + nuevoUsuario.getEmail() + " saved succesfully", HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

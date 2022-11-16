@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalHandlerException {
 
-    @ExceptionHandler({CustomNotFoundException.class, FileNotFoundException.class, CatalogoException.class})
+    @ExceptionHandler({CustomNotFoundException.class, FileNotFoundException.class, CatalogoException.class, IllegalArgumentException.class})
     public ResponseEntity<String> handlerException(RuntimeException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
