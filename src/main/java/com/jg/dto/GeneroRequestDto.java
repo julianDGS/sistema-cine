@@ -13,7 +13,6 @@ import javax.persistence.Transient;
 public class GeneroRequestDto {
     private long idGenero;
     private String nombre;
-    private String imagen;
     @Transient
     private MultipartFile imgTemp;
 }

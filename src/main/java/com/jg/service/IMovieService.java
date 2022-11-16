@@ -1,24 +1,26 @@
 package com.jg.service;
 
-import com.jg.domain.Genero;
-import com.jg.domain.Rodaje;
+import com.jg.dto.GeneroDto;
+import com.jg.dto.RodajeDto;
+import com.jg.dto.RodajeRequestDto;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface IMovieService {
-     List<Rodaje> listarRodajes();
+    List<RodajeDto> listarRodajes();
 
-     List<Genero> listarGeneros();
+    List<GeneroDto> listarGeneros();
 
-     Rodaje guardar(Rodaje rodaje);
+    RodajeDto guardar(RodajeRequestDto rodaje);
 
-    Rodaje encontrar(Long idRodaje);
-    
+    RodajeDto encontrar(Long idRodaje);
+
     void eliminar(long idRodaje);
-    
-    Rodaje encontrarPorTitulo(String titulo);
 
-    List<Rodaje> filtrarGeneroRodaje(long idGenero);
+    RodajeDto encontrarPorTitulo(String titulo);
 
-    List<Rodaje> ordenarRodajeFecha(String sort);
+    List<RodajeDto> filtrarGeneroRodaje(long idGenero);
+
+    List<RodajeDto> ordenarRodajeFecha(String sort);
 }

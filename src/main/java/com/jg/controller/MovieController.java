@@ -1,6 +1,8 @@
 package com.jg.controller;
 
-import com.jg.domain.*;
+import com.jg.dto.GeneroDto;
+import com.jg.dto.RodajeDto;
+import com.jg.dto.RodajeRequestDto;
 import com.jg.exceptions.InvalidFieldException;
 import com.jg.service.CatalogoService;
 import com.jg.service.IMovieService;
@@ -33,17 +35,17 @@ public class MovieController {
     }
 
     @GetMapping("")
-    private ResponseEntity<List<Rodaje>> listadoRodajes() {
+    private ResponseEntity<List<RodajeDto>> listadoRodajes() {
         return new ResponseEntity<>(rodajeService.listarRodajes(), HttpStatus.OK);
     }
 
     @GetMapping("/save")
-    private ResponseEntity<List<Genero>> formularioCrearRodaje() {
+    private ResponseEntity<List<GeneroDto>> formularioCrearRodaje() {
         return new ResponseEntity<>(rodajeService.listarGeneros(), HttpStatus.OK);
     }
 
     @PostMapping("/save")
-    private ResponseEntity<Rodaje> guardarRodaje(@Valid @RequestBody Rodaje rodaje, BindingResult br) {
+    private ResponseEntity<RodajeDto> guardarRodaje(@Valid @RequestBody RodajeRequestDto rodaje, BindingResult br) {
         if (br.hasErrors()) {
             throw new InvalidFieldException("Campos no válidos", br);
         }
@@ -51,8 +53,8 @@ public class MovieController {
     }
 
     @GetMapping("/update/{idRodaje}")
-    private ResponseEntity<Rodaje> editarRodaje(Rodaje rodaje) {
-        return new ResponseEntity<>(rodajeService.encontrar(rodaje.getIdRodaje()), HttpStatus.OK);
+    private ResponseEntity<RodajeDto> editarRodaje(@PathVariable long idRodaje) {
+        return new ResponseEntity<>(rodajeService.encontrar(idRodaje), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{idRodaje}")
@@ -62,22 +64,22 @@ public class MovieController {
     }
 
     @GetMapping("/details/{idRodaje}")
-    private ResponseEntity<Rodaje> detallesRodaje(Rodaje rodaje) {
-        return new ResponseEntity<>(rodajeService.encontrar(rodaje.getIdRodaje()), HttpStatus.OK);
+    private ResponseEntity<RodajeDto> detallesRodaje(@PathVariable long idRodaje) {
+        return new ResponseEntity<>(rodajeService.encontrar(idRodaje), HttpStatus.OK);
     }
 
     @GetMapping(params = "name")
-    private ResponseEntity<Rodaje> buscarRodaje(@RequestParam(name = "name") String titulo) {
+    private ResponseEntity<RodajeDto> buscarRodaje(@RequestParam(name = "name") String titulo) {
         return new ResponseEntity<>(rodajeService.encontrarPorTitulo(titulo), HttpStatus.OK);
     }
 
     @GetMapping(params = "genre")
-    private ResponseEntity<List<Rodaje>> filtrarGeneroRodaje(@RequestParam(name = "genre") long idGenero) {
+    private ResponseEntity<List<RodajeDto>> filtrarGeneroRodaje(@RequestParam(name = "genre") long idGenero) {
         return new ResponseEntity<>(rodajeService.filtrarGeneroRodaje(idGenero), HttpStatus.OK);
     }
 
     @GetMapping(params = "order")
-    private ResponseEntity<List<Rodaje>> ordenarRodajeFecha(@RequestParam(name = "order") String sort) {
+    private ResponseEntity<List<RodajeDto>> ordenarRodajeFecha(@RequestParam(name = "order") String sort) {
         return new ResponseEntity<>(rodajeService.ordenarRodajeFecha(sort), HttpStatus.OK);
     }
 }

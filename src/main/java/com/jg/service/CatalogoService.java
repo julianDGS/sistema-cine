@@ -1,7 +1,7 @@
 package com.jg.service;
 
-import com.jg.domain.Rodaje;
 import com.jg.dto.PersonajeDto;
+import com.jg.dto.RodajeDto;
 import com.jg.exceptions.CatalogoException;
 import com.jg.exceptions.FileNotFoundException;
 import java.io.IOException;
@@ -23,10 +23,14 @@ public class CatalogoService implements ICatalogo {
 
     @Value("${storage.location}")
     private String storage;
+    private final PersonajeService personajeService;
+    private final RodajeService rodajeService;
+
     @Autowired
-    private PersonajeService personajeService;
-    @Autowired
-    private RodajeService rodajeService;
+    public CatalogoService(PersonajeService personajeService, RodajeService rodajeService) {
+        this.personajeService = personajeService;
+        this.rodajeService = rodajeService;
+    }
 
     @Override
     @Transactional
@@ -63,7 +67,7 @@ public class CatalogoService implements ICatalogo {
 
     @Override
     public Resource cargarArchivoRodaje(long idRodaje) {
-        Rodaje rodaje = rodajeService.encontrar(idRodaje);
+        RodajeDto rodaje = rodajeService.encontrar(idRodaje);
         String nombreArchivo = rodaje.getImagen();
         return archivo(nombreArchivo);
 

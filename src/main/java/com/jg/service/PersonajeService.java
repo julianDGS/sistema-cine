@@ -41,13 +41,13 @@ public class PersonajeService implements ICharacterService{
     @Override
     @Transactional(readOnly = true)
     public List<PersonajeDto> listarPersonajes() {
-        return personajeMapper.personajesToPersonajeResponseDtos(personajeRepo.findAll());
+        return personajeMapper.personajesToPersonajeDtos(personajeRepo.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<RodajeDto> listarRodajes() {
-        return rodajeMapper.rodajesToRodajeResponseDtos(rodajeRepo.findAll());
+        return rodajeMapper.rodajesToRodajeDtos(rodajeRepo.findAll());
     }
 
     @Override
@@ -55,13 +55,13 @@ public class PersonajeService implements ICharacterService{
     public PersonajeDto guardar(PersonajeRequestDto personajeRequestDto) {
         Personaje personaje = personajeMapper.personajeRequestDtoToPersonaje(personajeRequestDto);
         personaje.setImagen(catalogo.guardarArchivo(personajeRequestDto.getImgTemp()));
-        return personajeMapper.personajeToPersonajeResponseDto(personajeRepo.save(personaje));
+        return personajeMapper.personajeToPersonajeDto(personajeRepo.save(personaje));
     }
 
     @Override
     @Transactional(readOnly = true)
     public PersonajeDto encontrar(Long idPersonaje) {
-        return personajeMapper.personajeToPersonajeResponseDto(personajeRepo.findById(idPersonaje).orElseThrow(() -> {
+        return personajeMapper.personajeToPersonajeDto(personajeRepo.findById(idPersonaje).orElseThrow(() -> {
             throw new CustomNotFoundException("Personaje no encontrado");
         }));
     }
@@ -79,7 +79,7 @@ public class PersonajeService implements ICharacterService{
     @Override
     @Transactional(readOnly = true)
     public PersonajeDto encontrarPorNombre(String nombre) {
-       return personajeMapper.personajeToPersonajeResponseDto(personajeRepo.findByNombre(nombre));
+       return personajeMapper.personajeToPersonajeDto(personajeRepo.findByNombre(nombre));
     }
 
     @Override

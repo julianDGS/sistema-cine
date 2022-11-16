@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface GeneroMapper {
 
-    GeneroDto generoToGeneroResponseDto(Genero genero);
-    List<GeneroDto> generosToGeneroResponseDtos(List<Genero> genero);
+    GeneroDto generoToGeneroDto(Genero genero);
+    List<GeneroDto> generosToGeneroDtos(List<Genero> genero);
     Genero generoRequestDtoToGenero(GeneroRequestDto genero);
     
 }

@@ -10,8 +10,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PersonajeMapper {
 
-    PersonajeDto personajeToPersonajeResponseDto(Personaje personaje);
-    List<PersonajeDto> personajesToPersonajeResponseDtos(List<Personaje> personaje);
+    PersonajeDto personajeToPersonajeDto(Personaje personaje);
+    List<PersonajeDto> personajesToPersonajeDtos(List<Personaje> personaje);
     Personaje personajeRequestDtoToPersonaje(PersonajeRequestDto personaje);
 
 }
