@@ -1,9 +1,8 @@
 package com.jg.service;
 
-import com.jg.domain.Personaje;
 import com.jg.domain.Rodaje;
+import com.jg.dto.PersonajeDto;
 import com.jg.exceptions.CatalogoException;
-import com.jg.exceptions.CustomNotFoundException;
 import com.jg.exceptions.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileSystemUtils;
@@ -58,7 +56,7 @@ public class CatalogoService implements ICatalogo {
     @Override
     @Transactional(readOnly = true)
     public Resource cargarArchivo(long idPersonaje) {
-        Personaje personaje = personajeService.encontrar(idPersonaje);
+        PersonajeDto personaje = personajeService.encontrar(idPersonaje);
         String nombreArchivo = personaje.getImagen();
         return archivo(nombreArchivo);
     }

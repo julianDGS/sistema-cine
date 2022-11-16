@@ -1,24 +1,25 @@
 package com.jg.service;
 
-import com.jg.domain.Personaje;
-import com.jg.domain.Rodaje;
+import com.jg.dto.PersonajeRequestDto;
+import com.jg.dto.PersonajeDto;
+import com.jg.dto.RodajeDto;
+
 import java.util.List;
-import java.util.Optional;
 
 public interface ICharacterService {
-     List<Personaje> listarPersonajes();
+    List<PersonajeDto> listarPersonajes();
     
-    List<Rodaje> listarRodajes();
+    List<RodajeDto> listarRodajes();
     
-    Personaje guardar(Personaje rodaje);
+    PersonajeDto guardar(PersonajeRequestDto rodaje);
     
-    Personaje encontrar(Long idPersonaje);
+    PersonajeDto encontrar(Long idPersonaje);
     
     void eliminar(long idPersonaje);
     
-    Personaje encontrarPorNombre(String nombre);
+    PersonajeDto encontrarPorNombre(String nombre);
 
-    List<Personaje> filtrarPorEdad(int edad);
+    List<PersonajeDto> filtrarPorEdad(int edad);
 
-    List<Personaje> filtrarRodajePersonaje(long idMovie);
+    List<PersonajeDto> filtrarRodajePersonaje(long idMovie);
 }

@@ -1,6 +1,8 @@
 package com.jg.controller;
 
-import com.jg.domain.*;
+import com.jg.dto.PersonajeRequestDto;
+import com.jg.dto.PersonajeDto;
+import com.jg.dto.RodajeDto;
 import com.jg.exceptions.InvalidFieldException;
 import com.jg.service.CatalogoService;
 import com.jg.service.ICharacterService;
@@ -34,17 +36,17 @@ public class CharacterController {
     }
 
     @GetMapping()
-    private ResponseEntity<List<Personaje>> listadoPersonajes() {
+    private ResponseEntity<List<PersonajeDto>> listadoPersonajes() {
         return new ResponseEntity<>(personajeService.listarPersonajes(), HttpStatus.OK);
     }
 
     @GetMapping("/save")
-    private ResponseEntity<List<Rodaje>> formularioCrearPersonaje() {
+    private ResponseEntity<List<RodajeDto>> formularioCrearPersonaje() {
         return new ResponseEntity<>(personajeService.listarRodajes(), HttpStatus.OK);
     }
 
     @PostMapping("/save")
-    private ResponseEntity<Personaje> guardarPersonaje(@Valid @RequestBody Personaje personaje, BindingResult br) {
+    private ResponseEntity<PersonajeDto> guardarPersonaje(@Valid @RequestBody PersonajeRequestDto personaje, BindingResult br) {
         if (br.hasErrors()) {
             throw new InvalidFieldException("Campos no válidos", br);
         }
@@ -52,8 +54,8 @@ public class CharacterController {
     }
 
     @GetMapping("/update/{idPersonaje}")
-    private ResponseEntity<Personaje> editarPersonaje(Personaje personaje) {
-        return new ResponseEntity<>(personajeService.encontrar(personaje.getIdPersonaje()), HttpStatus.OK);
+    private ResponseEntity<PersonajeDto> editarPersonaje(@PathVariable long idPersonaje) {
+        return new ResponseEntity<>(personajeService.encontrar(idPersonaje), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{idPersonaje}")
@@ -63,22 +65,22 @@ public class CharacterController {
     }
 
     @GetMapping("/details/{idPersonaje}")
-    private ResponseEntity<Personaje> detallesPersonaje(Personaje personaje) {
-        return new ResponseEntity<>(personajeService.encontrar(personaje.getIdPersonaje()), HttpStatus.OK);
+    private ResponseEntity<PersonajeDto> detallesPersonaje(@PathVariable long idPersonaje) {
+        return new ResponseEntity<>(personajeService.encontrar(idPersonaje), HttpStatus.OK);
     }
 
     @GetMapping(params = "name")
-    private ResponseEntity<Personaje> buscarPersonaje(@RequestParam(name = "name") String nombre) {
+    private ResponseEntity<PersonajeDto> buscarPersonaje(@RequestParam(name = "name") String nombre) {
         return new ResponseEntity<>(personajeService.encontrarPorNombre(nombre), HttpStatus.OK);
     }
 
     @GetMapping(params = "age")
-    private ResponseEntity<List<Personaje>> filtrarEdadPersonaje(@RequestParam(name = "age") int edad) {
+    private ResponseEntity<List<PersonajeDto>> filtrarEdadPersonaje(@RequestParam(name = "age") int edad) {
         return new ResponseEntity<>(personajeService.filtrarPorEdad(edad), HttpStatus.OK);
     }
 
     @GetMapping(params = "movies")
-    private ResponseEntity<List<Personaje>> filtrarRodajePersonaje(@RequestParam(name = "movies") long idMovie) {
+    private ResponseEntity<List<PersonajeDto>> filtrarRodajePersonaje(@RequestParam(name = "movies") long idMovie) {
         return new ResponseEntity<>(personajeService.filtrarRodajePersonaje(idMovie), HttpStatus.OK);
     }
 }

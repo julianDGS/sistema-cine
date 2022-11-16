@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GeneroResponseDto {
+public class GeneroDto {
     private long idGenero;
     private String nombre;
     private String imagen;

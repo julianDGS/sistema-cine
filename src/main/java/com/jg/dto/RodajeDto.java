@@ -11,12 +11,12 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RodajeResponseDto {
+public class RodajeDto {
     private long idRodaje;
     private String titulo;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fecha;
     private int calificacion;
     private String imagen;
-    private final Set<GeneroResponseDto> generos = new HashSet<>();
+    private final Set<GeneroDto> generos = new HashSet<>();
 }
