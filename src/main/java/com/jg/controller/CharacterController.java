@@ -1,9 +1,9 @@
 package com.jg.controller;
 
 import com.jg.domain.*;
+import com.jg.exceptions.InvalidFieldException;
 import com.jg.service.CatalogoService;
 import com.jg.service.ICharacterService;
-import com.jg.service.PersonajeService;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -40,17 +40,16 @@ public class CharacterController {
     }
 
     @PostMapping("/save")
-    private ResponseEntity<?> guardarPersonaje(@Valid @RequestBody Personaje personaje, BindingResult br) {
+    private ResponseEntity<Personaje> guardarPersonaje(@Valid @RequestBody Personaje personaje, BindingResult br) {
         if (br.hasErrors()) {
-            return new ResponseEntity("Fail creating character", HttpStatus.BAD_REQUEST);
+            throw new InvalidFieldException("Campos no válidos", br);
         }
-        personaje.setImagen(catalogoService.guardarArchivo(personaje.getImgTemp()));
-        return new ResponseEntity(personajeService.guardar(personaje), HttpStatus.OK);
+        return new ResponseEntity<>(personajeService.guardar(personaje), HttpStatus.OK);
     }
 
     @GetMapping("/update/{idPersonaje}")
-    private ResponseEntity<?> editarPersonaje(Personaje personaje) {
-        return new ResponseEntity(personajeService.encontrar(personaje.getIdPersonaje()), HttpStatus.OK);
+    private ResponseEntity<Personaje> editarPersonaje(Personaje personaje) {
+        return new ResponseEntity<>(personajeService.encontrar(personaje.getIdPersonaje()), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{idPersonaje}")

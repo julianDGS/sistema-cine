@@ -37,8 +37,9 @@ public class PersonajeService implements ICharacterService{
 
     @Override
     @Transactional
-    public Personaje guardar(Personaje rodaje) {
-        return personajeRepo.save(rodaje);
+    public Personaje guardar(Personaje personaje) {
+        personaje.setImagen(catalogo.guardarArchivo(personaje.getImgTemp()));
+        return personajeRepo.save(personaje);
     }
 
     @Override
