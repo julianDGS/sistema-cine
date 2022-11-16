@@ -1,4 +1,4 @@
-package com.jg.security;
+package com.jg.security.dto;
 
 import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;

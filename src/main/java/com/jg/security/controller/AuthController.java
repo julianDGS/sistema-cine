@@ -1,7 +1,7 @@
 package com.jg.security.controller;
 
 import com.jg.security.JWT.*;
-import com.jg.security.JwtDto;
+import com.jg.security.dto.*;
 import com.jg.security.domain.*;
 import com.jg.security.service.*;
 import java.util.*;
@@ -38,7 +38,7 @@ public class AuthController {
     JwtProvider jwtProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<?> nuevo(@Valid @RequestBody Usuario nuevoUsuario, BindingResult bindingResult) {
+    public ResponseEntity<?> nuevo(@Valid @RequestBody UserRegisterDto nuevoUsuario, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity("campos mal puestos o email inválido", HttpStatus.BAD_REQUEST);
         }
@@ -61,7 +61,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtDto> login(@Valid @RequestBody Usuario loginUsuario, BindingResult bindingResult) {
+    public ResponseEntity<JwtDto> login(@Valid @RequestBody UserLoginDto loginUsuario, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity("campos mal puestos", HttpStatus.BAD_REQUEST);
         }
