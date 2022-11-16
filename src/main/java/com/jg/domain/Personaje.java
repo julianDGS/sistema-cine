@@ -3,11 +3,13 @@ package com.jg.domain;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "personaje")
 public class Personaje{
     

@@ -1,14 +1,17 @@
 package com.jg.service;
 
-import com.jg.dto.PersonajeDto;
-import com.jg.dto.RodajeDto;
+import com.jg.domain.Personaje;
+import com.jg.domain.Rodaje;
 import com.jg.exceptions.CatalogoException;
+import com.jg.exceptions.CustomNotFoundException;
 import com.jg.exceptions.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.*;
 
+import com.jg.repository.PersonajeRepository;
+import com.jg.repository.RodajeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -23,13 +26,13 @@ public class CatalogoService implements ICatalogo {
 
     @Value("${storage.location}")
     private String storage;
-    private final PersonajeService personajeService;
-    private final RodajeService rodajeService;
+    private final PersonajeRepository personajeRepository;
+    private final RodajeRepository rodajeRepository;
 
     @Autowired
-    public CatalogoService(PersonajeService personajeService, RodajeService rodajeService) {
-        this.personajeService = personajeService;
-        this.rodajeService = rodajeService;
+    public CatalogoService(PersonajeRepository personajeRepository, RodajeRepository rodajeRepository) {
+        this.personajeRepository = personajeRepository;
+        this.rodajeRepository = rodajeRepository;
     }
 
     @Override
@@ -60,14 +63,18 @@ public class CatalogoService implements ICatalogo {
     @Override
     @Transactional(readOnly = true)
     public Resource cargarArchivo(long idPersonaje) {
-        PersonajeDto personaje = personajeService.encontrar(idPersonaje);
+        Personaje personaje = personajeRepository.findById(idPersonaje).orElseThrow(() -> {
+            throw new CustomNotFoundException("Personaje no encontrado");
+        });
         String nombreArchivo = personaje.getImagen();
         return archivo(nombreArchivo);
     }
 
     @Override
     public Resource cargarArchivoRodaje(long idRodaje) {
-        RodajeDto rodaje = rodajeService.encontrar(idRodaje);
+        Rodaje rodaje = rodajeRepository.findById(idRodaje).orElseThrow(() -> {
+            throw new CustomNotFoundException("Rodaje no encontrado");
+        });
         String nombreArchivo = rodaje.getImagen();
         return archivo(nombreArchivo);
 
