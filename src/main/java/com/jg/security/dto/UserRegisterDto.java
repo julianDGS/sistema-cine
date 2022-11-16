@@ -3,7 +3,6 @@ package com.jg.security.dto;
 import com.jg.security.domain.Rol;
 import lombok.Data;
 
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

@@ -1,5 +1,6 @@
 package com.jg.security.controller;
 
+import com.jg.exceptions.InvalidFieldException;
 import com.jg.security.JWT.*;
 import com.jg.security.dto.*;
 import com.jg.security.domain.*;
@@ -38,15 +39,15 @@ public class AuthController {
     JwtProvider jwtProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<?> nuevo(@Valid @RequestBody UserRegisterDto nuevoUsuario, BindingResult bindingResult) {
+    public ResponseEntity<String> nuevo(@Valid @RequestBody UserRegisterDto nuevoUsuario, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity("campos mal puestos o email inválido", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("campos mal puestos o email inválido");
         }
         if (usuarioService.existeUsuario(nuevoUsuario.getUsername())) {
-            return new ResponseEntity("ese nombre ya existe", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("ese nombre ya existe");
         }
         if (usuarioService.existeEmail(nuevoUsuario.getEmail())) {
-            return new ResponseEntity("ese email ya existe", HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("ese email ya existe");
         }
         Usuario usuario
                 = new Usuario(nuevoUsuario.getUsername(), passwordEncoder.encode(nuevoUsuario.getPassword()), nuevoUsuario.getEmail());
@@ -57,13 +58,14 @@ public class AuthController {
             roles.add(rolService.encontrar("ROLE_ADMIN").get());
         }
         usuario.setRoles(roles);
-        return new ResponseEntity(usuarioService.guardar(usuario), HttpStatus.CREATED);
+        usuarioService.guardar(usuario);
+        return new ResponseEntity<>("User " + nuevoUsuario.getEmail() + " saved succesfully", HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<JwtDto> login(@Valid @RequestBody UserLoginDto loginUsuario, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity("campos mal puestos", HttpStatus.BAD_REQUEST);
+            throw new InvalidFieldException("campos mal puestos", bindingResult);
         }
         Authentication authentication
                 = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUsuario.getUsername(), loginUsuario.getPassword()));
@@ -71,6 +73,6 @@ public class AuthController {
         String jwt = jwtProvider.generateToken(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         JwtDto jwtDto = new JwtDto(jwt, userDetails.getUsername(), userDetails.getAuthorities());
-        return new ResponseEntity(jwtDto, HttpStatus.OK);
+        return new ResponseEntity<>(jwtDto, HttpStatus.OK);
     }
 }
