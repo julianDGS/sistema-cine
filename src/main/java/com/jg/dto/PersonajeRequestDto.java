@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Transient;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,11 +17,14 @@ import java.util.Set;
 public class PersonajeRequestDto {
 
     private long idPersonaje;
+    @NotEmpty(message = "nombre no puede ser vacío")
     private String nombre;
-    private int edad;
+    @NotNull(message = "edad no puede ser nula")
+    private Integer edad;
     private float peso;
+    @NotEmpty(message = "historia no puede estar vacía")
     private String historia;
     @Transient
     private MultipartFile imgTemp;
-    private final Set<RodajeRequestDto> rodajes = new HashSet<>();
+    private final Set<RodajeFromPersonajeDto> rodajes = new HashSet<>();
 }
