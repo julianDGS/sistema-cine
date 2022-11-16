@@ -7,6 +7,8 @@ import com.jg.service.ICharacterService;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+
+import org.aspectj.weaver.patterns.PerObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -59,35 +61,22 @@ public class CharacterController {
     }
 
     @GetMapping("/details/{idPersonaje}")
-    private ResponseEntity<?> detallesPersonaje(Personaje personaje) {
-        personaje = personajeService.encontrar(personaje.getIdPersonaje());
-        if (personaje == null) {
-            return new ResponseEntity("Character doesn't exists", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity(personaje, HttpStatus.OK);
+    private ResponseEntity<Personaje> detallesPersonaje(Personaje personaje) {
+        return new ResponseEntity<>(personajeService.encontrar(personaje.getIdPersonaje()), HttpStatus.OK);
     }
 
     @GetMapping(params = "name")
-    private ResponseEntity<?> buscarPersonaje(@RequestParam(name = "name") String nombre) {
-        return new ResponseEntity(personajeService.encontrarPorNombre(nombre), HttpStatus.OK);
+    private ResponseEntity<Personaje> buscarPersonaje(@RequestParam(name = "name") String nombre) {
+        return new ResponseEntity<>(personajeService.encontrarPorNombre(nombre), HttpStatus.OK);
     }
 
     @GetMapping(params = "age")
-    private ResponseEntity<?> filtrarEdadPersonaje(@RequestParam(name = "age") int edad) {
-        List<Personaje> personajes = personajeService.listarPersonajes();
-        personajes = personajes.stream()
-                .filter(i -> i.getEdad() == edad)
-                .collect(Collectors.toList());
-        return new ResponseEntity(personajes, HttpStatus.OK);
+    private ResponseEntity<List<Personaje>> filtrarEdadPersonaje(@RequestParam(name = "age") int edad) {
+        return new ResponseEntity<>(personajeService.filtrarPorEdad(edad), HttpStatus.OK);
     }
 
     @GetMapping(params = "movies")
-    private ResponseEntity<?> filtrarRodajePersonaje(@RequestParam(name = "movies") long idMovie) {
-        List<Personaje> personajes = (List<Personaje>) this.listadoPersonajes().getBody();
-        personajes = personajes.stream()
-                .filter(i -> i.getRodajes() == null ? false : i.getRodajes().stream()
-                .anyMatch(j -> j.getIdRodaje() == idMovie))
-                .collect(Collectors.toList());
-        return new ResponseEntity(personajes, HttpStatus.OK);
+    private ResponseEntity<List<Personaje>> filtrarRodajePersonaje(@RequestParam(name = "movies") long idMovie) {
+        return new ResponseEntity<>(personajeService.filtrarRodajePersonaje(idMovie), HttpStatus.OK);
     }
 }

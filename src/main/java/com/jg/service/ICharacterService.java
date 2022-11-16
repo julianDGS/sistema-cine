@@ -16,5 +16,9 @@ public interface ICharacterService {
     
     void eliminar(long idPersonaje);
     
-    public Personaje encontrarPorNombre(String nombre);
+    Personaje encontrarPorNombre(String nombre);
+
+    List<Personaje> filtrarPorEdad(int edad);
+
+    List<Personaje> filtrarRodajePersonaje(long idMovie);
 }

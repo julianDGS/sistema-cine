@@ -58,9 +58,7 @@ public class CatalogoService implements ICatalogo {
     @Override
     @Transactional(readOnly = true)
     public Resource cargarArchivo(long idPersonaje) {
-        Personaje personaje = personajeService.encontrar(idPersonaje).orElseThrow(() ->
-            {throw new CustomNotFoundException("Usuario no encontrado");
-            });
+        Personaje personaje = personajeService.encontrar(idPersonaje);
         String nombreArchivo = personaje.getImagen();
         return archivo(nombreArchivo);
     }

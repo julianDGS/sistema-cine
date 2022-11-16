@@ -7,6 +7,8 @@ import com.jg.repository.PersonajeRepository;
 import com.jg.repository.RodajeRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,5 +63,25 @@ public class PersonajeService implements ICharacterService{
     public Personaje encontrarPorNombre(String nombre) {
        return personajeRepo.findByNombre(nombre);
     }
-    
+
+    @Override
+    public List<Personaje> filtrarPorEdad(int edad) {
+        return listarPersonajes()
+                .stream()
+                .filter(i -> i.getEdad() == edad)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Personaje> filtrarRodajePersonaje(long idMovie) {
+        return listarPersonajes()
+                .stream()
+                .filter(
+                        i -> i.getRodajes() != null && i.getRodajes()
+                        .stream()
+                        .anyMatch(j -> j.getIdRodaje() == idMovie)
+                        )
+                .collect(Collectors.toList());
+    }
+
 }
