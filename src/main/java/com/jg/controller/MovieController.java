@@ -1,13 +1,14 @@
 package com.jg.controller;
 
 import com.jg.domain.*;
-import com.jg.service.Catalogo;
+import com.jg.service.CatalogoService;
 import com.jg.service.RodajeService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +19,14 @@ import org.springframework.web.bind.annotation.*;
 public class MovieController {
 
     @Autowired
-    private Catalogo catalogo;
+    private CatalogoService catalogoService;
 
     @Autowired
     private RodajeService rodajeService;
 
     @GetMapping("/img/{idRodaje}")
-    private ResponseEntity<?> cargarImagen(@PathVariable("idRodaje") long idRodaje) {
-        Rodaje rodaje = rodajeService.encontrar(idRodaje).orElse(null);
-        return new ResponseEntity(catalogo.cargarArchivo(rodaje.getImagen()), HttpStatus.OK);
+    private ResponseEntity<Resource> cargarImagen(@PathVariable("idRodaje") long idRodaje) {
+        return new ResponseEntity<>(catalogoService.cargarArchivoRodaje(idRodaje), HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -46,7 +46,7 @@ public class MovieController {
         if (br.hasErrors()) {
             return new ResponseEntity("Fail creating Movie/serie", HttpStatus.BAD_REQUEST);
         }
-        rodaje.setImagen(catalogo.guardarArchivo(rodaje.getImgTemp()));
+        rodaje.setImagen(catalogoService.guardarArchivo(rodaje.getImgTemp()));
         return new ResponseEntity(rodajeService.guardar(rodaje), HttpStatus.OK);
     }
 
@@ -58,7 +58,7 @@ public class MovieController {
     @DeleteMapping("/delete/{idRodaje}")
     private ResponseEntity<?> eliminarRodaje(@PathVariable("idRodaje") long idRodaje) {
         Rodaje rodaje = rodajeService.encontrar(idRodaje).orElse(null);
-        catalogo.eliminarArchivo(rodaje.getImagen());
+        catalogoService.eliminarArchivo(rodaje.getImagen());
         rodajeService.eliminar(rodaje);
         return new ResponseEntity("Movie or Serie deleted", HttpStatus.OK);
     }

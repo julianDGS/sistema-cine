@@ -4,10 +4,6 @@
  */
 package com.jg.exceptions;
 
-/**
- *
- * @author Julian
- */
 public class CatalogoException extends RuntimeException {
     public CatalogoException(String message) {
         super(message);

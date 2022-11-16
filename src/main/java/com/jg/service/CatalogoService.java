@@ -1,24 +1,34 @@
 package com.jg.service;
 
+import com.jg.domain.Personaje;
+import com.jg.domain.Rodaje;
 import com.jg.exceptions.CatalogoException;
+import com.jg.exceptions.CustomNotFoundException;
 import com.jg.exceptions.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class Catalogo implements ICatalogo {
+public class CatalogoService implements ICatalogo {
 
     @Value("${storage.location}")
     private String storage;
+    @Autowired
+    private PersonajeService personajeService;
+    @Autowired
+    private RodajeService rodajeService;
 
     @Override
     @Transactional
@@ -47,7 +57,25 @@ public class Catalogo implements ICatalogo {
 
     @Override
     @Transactional(readOnly = true)
-    public Resource cargarArchivo(String nombreArchivo) {
+    public Resource cargarArchivo(long idPersonaje) {
+        Personaje personaje = personajeService.encontrar(idPersonaje).orElseThrow(() ->
+            {throw new CustomNotFoundException("Usuario no encontrado");
+            });
+        String nombreArchivo = personaje.getImagen();
+        return archivo(nombreArchivo);
+    }
+
+    @Override
+    public Resource cargarArchivoRodaje(long idRodaje) {
+        Rodaje rodaje = rodajeService.encontrar(idRodaje).orElseThrow(() ->
+        {throw new CustomNotFoundException("Rodaje no encontrado");
+        });
+        String nombreArchivo = rodaje.getImagen();
+        return archivo(nombreArchivo);
+
+    }
+
+    private Resource archivo(String nombreArchivo){
         Path archivo = Paths.get(storage).resolve(nombreArchivo);
         try {
             Resource recurso = new UrlResource(archivo.toUri());

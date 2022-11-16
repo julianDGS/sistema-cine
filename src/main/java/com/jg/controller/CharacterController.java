@@ -1,12 +1,13 @@
 package com.jg.controller;
 
 import com.jg.domain.*;
-import com.jg.service.Catalogo;
+import com.jg.service.CatalogoService;
 import com.jg.service.PersonajeService;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class CharacterController {
 
     @Autowired
-    private Catalogo catalogo;
+    private CatalogoService catalogoService;
 
     @Autowired
     private PersonajeService personajeService;
 
     @GetMapping("/img/{idPersonaje}")
-    private ResponseEntity<?> cargarImagen(@PathVariable("idPersonaje") long idPersonaje) {
-        Personaje personaje = personajeService.encontrar(idPersonaje).orElse(null);
-        return new ResponseEntity(catalogo.cargarArchivo(personaje.getImagen()), HttpStatus.OK);
+    private ResponseEntity<Resource> cargarImagen(@PathVariable("idPersonaje") long idPersonaje) {
+        return new ResponseEntity<>(catalogoService.cargarArchivo(idPersonaje), HttpStatus.OK);
     }
 
     @GetMapping()
@@ -45,7 +45,7 @@ public class CharacterController {
         if (br.hasErrors()) {
             return new ResponseEntity("Fail creating character", HttpStatus.BAD_REQUEST);
         }
-        personaje.setImagen(catalogo.guardarArchivo(personaje.getImgTemp()));
+        personaje.setImagen(catalogoService.guardarArchivo(personaje.getImgTemp()));
         return new ResponseEntity(personajeService.guardar(personaje), HttpStatus.OK);
     }
 
@@ -57,7 +57,7 @@ public class CharacterController {
     @DeleteMapping("/delete/{idPersonaje}")
     private ResponseEntity<?> eliminarPersonaje(@PathVariable("idPersonaje") long idPersonaje) {
         Personaje personaje = personajeService.encontrar(idPersonaje).orElse(null);
-        catalogo.eliminarArchivo(personaje.getImagen());
+        catalogoService.eliminarArchivo(personaje.getImagen());
         personajeService.eliminar(personaje);
         return new ResponseEntity("Character deleted", HttpStatus.OK);
     }
