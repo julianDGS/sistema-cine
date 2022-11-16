@@ -1,6 +1,5 @@
 package com.jg.domain;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -10,9 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Entity
 @Data
 @Table(name = "personaje")
-public class Personaje implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
+public class Personaje{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

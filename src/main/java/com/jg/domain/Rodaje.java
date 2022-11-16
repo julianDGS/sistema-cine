@@ -1,6 +1,5 @@
 package com.jg.domain;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,9 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Entity
 @Data
 @Table(name = "rodaje")
-public class Rodaje implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Rodaje{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +26,7 @@ public class Rodaje implements Serializable {
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fecha;
-    
-    
+
     private int calificacion;
 
     private String imagen;
@@ -46,13 +42,4 @@ public class Rodaje implements Serializable {
     )
     private Set<Genero> generos = new HashSet<>();
 
-    public Rodaje() {
-    }
-
-    public Rodaje(long idRodaje) {
-        this.idRodaje = idRodaje;
-    }
-
-    
-    
 }
