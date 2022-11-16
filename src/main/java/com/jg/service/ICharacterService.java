@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ICharacterService {
-    public  List<Personaje> listarPersonajes();
+     List<Personaje> listarPersonajes();
     
-    public List<Rodaje> listarRodajes();
+    List<Rodaje> listarRodajes();
     
-    public Personaje guardar(Personaje rodaje);
+    Personaje guardar(Personaje rodaje);
     
-    public Optional<Personaje> encontrar(Long idPersonaje);
+    Personaje encontrar(Long idPersonaje);
     
-    public void eliminar(Personaje rodaje);
+    void eliminar(long idPersonaje);
     
     public Personaje encontrarPorNombre(String nombre);
 }

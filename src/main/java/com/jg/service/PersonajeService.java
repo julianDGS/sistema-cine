@@ -2,6 +2,7 @@ package com.jg.service;
 
 import com.jg.domain.Personaje;
 import com.jg.domain.Rodaje;
+import com.jg.exceptions.CustomNotFoundException;
 import com.jg.repository.PersonajeRepository;
 import com.jg.repository.RodajeRepository;
 import java.util.List;
@@ -18,6 +19,9 @@ public class PersonajeService implements ICharacterService{
 
     @Autowired
     private RodajeRepository rodajeRepo;
+
+    @Autowired
+    private ICatalogo catalogo;
     
     @Override
     @Transactional(readOnly = true)
@@ -39,14 +43,16 @@ public class PersonajeService implements ICharacterService{
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Personaje> encontrar(Long idPersonaje) {
-        return personajeRepo.findById(idPersonaje);
+    public Personaje encontrar(Long idPersonaje) {
+        return personajeRepo.findById(idPersonaje).orElseThrow(() -> {throw new CustomNotFoundException("Personaje no encontrado");});
     }
 
     @Override
     @Transactional
-    public void eliminar(Personaje rodaje) {
-        personajeRepo.delete(rodaje);
+    public void eliminar(long idPersonaje) {
+        Personaje personaje = encontrar(idPersonaje);
+        catalogo.eliminarArchivo(personaje.getImagen());
+        personajeRepo.delete(personaje);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.jg.controller;
 
 import com.jg.domain.*;
 import com.jg.service.CatalogoService;
+import com.jg.service.ICharacterService;
 import com.jg.service.PersonajeService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class CharacterController {
     private CatalogoService catalogoService;
 
     @Autowired
-    private PersonajeService personajeService;
+    private ICharacterService personajeService;
 
     @GetMapping("/img/{idPersonaje}")
     private ResponseEntity<Resource> cargarImagen(@PathVariable("idPersonaje") long idPersonaje) {
@@ -29,15 +30,13 @@ public class CharacterController {
     }
 
     @GetMapping()
-    private ResponseEntity<Personaje> listadoPersonajes() {
-        List<Personaje> personajes = personajeService.listarPersonajes();
-        return new ResponseEntity(personajes, HttpStatus.OK);
+    private ResponseEntity<List<Personaje>> listadoPersonajes() {
+        return new ResponseEntity<>(personajeService.listarPersonajes(), HttpStatus.OK);
     }
 
     @GetMapping("/save")
-    private ResponseEntity<?> formularioCrearPersonaje() {
-        List<Rodaje> rodajes = personajeService.listarRodajes();
-        return new ResponseEntity(rodajes, HttpStatus.OK);
+    private ResponseEntity<List<Rodaje>> formularioCrearPersonaje() {
+        return new ResponseEntity<>(personajeService.listarRodajes(), HttpStatus.OK);
     }
 
     @PostMapping("/save")
@@ -51,20 +50,18 @@ public class CharacterController {
 
     @GetMapping("/update/{idPersonaje}")
     private ResponseEntity<?> editarPersonaje(Personaje personaje) {
-        return new ResponseEntity(personajeService.encontrar(personaje.getIdPersonaje()).orElse(null), HttpStatus.OK);
+        return new ResponseEntity(personajeService.encontrar(personaje.getIdPersonaje()), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{idPersonaje}")
-    private ResponseEntity<?> eliminarPersonaje(@PathVariable("idPersonaje") long idPersonaje) {
-        Personaje personaje = personajeService.encontrar(idPersonaje).orElse(null);
-        catalogoService.eliminarArchivo(personaje.getImagen());
-        personajeService.eliminar(personaje);
-        return new ResponseEntity("Character deleted", HttpStatus.OK);
+    private ResponseEntity<String> eliminarPersonaje(@PathVariable("idPersonaje") long idPersonaje) {
+        personajeService.eliminar(idPersonaje);
+        return new ResponseEntity<>("Character deleted", HttpStatus.OK);
     }
 
     @GetMapping("/details/{idPersonaje}")
     private ResponseEntity<?> detallesPersonaje(Personaje personaje) {
-        personaje = personajeService.encontrar(personaje.getIdPersonaje()).orElse(null);
+        personaje = personajeService.encontrar(personaje.getIdPersonaje());
         if (personaje == null) {
             return new ResponseEntity("Character doesn't exists", HttpStatus.BAD_REQUEST);
         }
